@@ -5,6 +5,7 @@ import ChipToggle from './components/ChipToggle';
 import { Express15Min, DeepDive2Hour, FriendCook, Minimalist5, SearchCard } from './components/PathwayCards';
 import { FALLBACK_DATA } from './fallback';
 import { googleMapsSearchUrl, googleSearchUrl } from '@/lib/links';
+import { Analytics } from "@vercel/analytics/next"
 
 const LOADING_MESSAGES = [
   'Matching emotional state with culinary comfort...',
