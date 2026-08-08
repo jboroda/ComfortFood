@@ -1,0 +1,5 @@
+import { GoogleGenAI } from '@google/genai';
+
+export const MODEL_NAME = 'gemini-3.5-flash';
+
+export const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });

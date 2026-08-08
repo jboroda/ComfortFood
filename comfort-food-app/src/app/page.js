@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import ChipToggle from './components/ChipToggle';
 import { Express15Min, DeepDive2Hour, FriendCook, Minimalist5, SearchCard } from './components/PathwayCards';
 import { FALLBACK_DATA } from './fallback';
+import { googleMapsSearchUrl, googleSearchUrl } from '@/lib/links';
 
 const LOADING_MESSAGES = [
   'Matching emotional state with culinary comfort...',
@@ -120,13 +121,13 @@ export default function Home() {
       case 'minimalist5':   return p.minimalist5   && <Minimalist5 data={p.minimalist5} />;
       case 'localSpot':     return p.localSpot     && (
         <SearchCard data={p.localSpot}
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.localSpot.searchQuery || data.heroDish.name)}`}
+          href={googleMapsSearchUrl(p.localSpot.searchQuery || data.heroDish.name)}
           btnLabel="📍 Search on Google Maps"
           ariaLabel={`Find local spots for ${data.heroDish.name}`} />
       );
       case 'onlineOrder':   return p.onlineOrder   && (
         <SearchCard data={p.onlineOrder}
-          href={`https://www.google.com/search?q=${encodeURIComponent(p.onlineOrder.searchQuery || data.heroDish.name)}`}
+          href={googleSearchUrl(p.onlineOrder.searchQuery || data.heroDish.name)}
           btnLabel="🛵 Find Delivery Options"
           ariaLabel={`Order ${data.heroDish.name} for delivery`} />
       );
@@ -138,14 +139,29 @@ export default function Home() {
     <main className="min-h-screen text-stone-100 font-sans">
 
       {/* Hero header */}
-      <header className="relative overflow-hidden py-16 px-4 text-center">
+      <header className="relative overflow-hidden py-8 sm:py-10 px-4 text-center">
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" aria-hidden="true" />
+        <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
+          {/* Left cluster — flying left to right */}
+          <img src="/hero-grandma-no-background_e.png" alt=""
+            className="absolute top-2 left-[4%] sm:left-[8%] h-14 sm:h-24 md:h-28 w-auto animate-float [animation-delay:-0.6s]" style={{ '--float-rot': '6deg' }} />
+          {/* <img src="/hero-grandma-no-background_c.png" alt=""
+            className="absolute top-[40%] left-[1%] sm:left-[3%] h-10 sm:h-16 md:h-20 w-auto animate-float [animation-delay:-2.4s]" style={{ '--float-rot': '4deg' }} /> */}
+          <img src="/hero-grandma-no-background_d.png" alt=""
+            className="absolute bottom-1 left-[10%] sm:left-[14%] h-9 sm:h-12 md:h-16 w-auto animate-float [animation-delay:-1.8s]" style={{ '--float-rot': '-3deg' }} />
+
+          {/* Right cluster — flying right to left */}
+          <img src="/hero-grandma-no-background_a.PNG" alt=""
+            className="absolute top-1 right-[4%] sm:right-[8%] h-14 sm:h-24 md:h-28 w-auto animate-float" style={{ '--float-rot': '-6deg' }} />
+          <img src="/hero-grandma-no-background_b.png" alt=""
+            className="absolute bottom-0 right-[12%] sm:right-[16%] h-9 sm:h-16 md:h-20 w-auto animate-float [animation-delay:-1.2s]" style={{ '--float-rot': '3deg' }} />
+        </div>
         <div className="relative z-10 space-y-3">
           <div className="inline-block px-3.5 py-1 bg-amber-500/20 border border-amber-500/40 rounded-full text-amber-300 text-xs font-semibold tracking-wide uppercase backdrop-blur-sm">
             Culinary Therapy Engine
           </div>
-          <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight drop-shadow-lg">
-            🍲 Comfort Food Challenge
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-lg">
+            Comfort Food Challenge
           </h1>
           <p className="text-stone-300 max-w-xl mx-auto text-sm sm:text-base drop-shadow">
             Vent your stress or describe your day. We'll match you with one perfect comfort dish and 6 ways to execute it.
