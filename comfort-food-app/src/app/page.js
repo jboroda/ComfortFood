@@ -13,9 +13,18 @@ const LOADING_MESSAGES = [
   'Crafting your perfect dish prescription...',
 ];
 
+const MOOD_EMOJIS = [
+  { emoji: '😤', text: "I'm frustrated and overwhelmed" },
+  { emoji: '😢', text: "I'm sad and need comfort" },
+  { emoji: '😰', text: "I'm stressed and anxious" },
+  { emoji: '😴', text: "I'm exhausted and drained" },
+  { emoji: '🥳', text: "I'm celebrating something!" },
+  { emoji: '😔', text: "I'm lonely and need warmth" },
+];
+
 const TABS = [
   { id: 'express15Min',  label: '⚡ 15-Min Express' },
-  { id: 'deepDive2Hour', label: '🍲 2-Hr Therapy' },
+  { id: 'deepDive2Hour', label: '🫕 2-Hr Therapy' },
   { id: 'friendCook',    label: '👥 With a Friend' },
   { id: 'minimalist5',   label: '🥫 ≤ 5 Items' },
   { id: 'localSpot',     label: '📍 Local Spot' },
@@ -52,6 +61,47 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('express15Min');
   const [error, setError] = useState('');
   const [msgIndex, setMsgIndex] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const [listCopied, setListCopied] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
+  }, []);
+
+  const getShoppingList = () => {
+    const p = data?.pathways;
+    const ingredients =
+      p?.express15Min?.ingredients ??
+      p?.deepDive2Hour?.ingredients ??
+      p?.friendCook?.ingredients ??
+      p?.minimalist5?.ingredients ?? [];
+    const dish = data?.heroDish?.name ?? 'My Comfort Dish';
+    return `🛒 Shopping List — ${dish}\n\n${ingredients.map(i => `• ${i}`).join('\n')}`;
+  };
+
+  const handleCopyList = async () => {
+    await navigator.clipboard.writeText(getShoppingList());
+    setListCopied(true);
+    setTimeout(() => setListCopied(false), 2000);
+  };
+
+  const handleTextList = () => {
+    const body = encodeURIComponent(getShoppingList());
+    window.location.href = `sms:?&body=${body}`;
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const text = `I just got matched with "${data.heroDish?.name}" by the Comfort Food Challenge! 🍲`;
+    if (navigator.share) {
+      await navigator.share({ title: text, url });
+    } else {
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   const resultsRef = useRef(null);
   const MAX_CHARS = 500;
@@ -70,7 +120,7 @@ export default function Home() {
 
   useEffect(() => {
     if (data && resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [data]);
 
@@ -170,7 +220,7 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-32 space-y-10">
 
         <section className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -189,6 +239,14 @@ export default function Home() {
                 placeholder="I've been staring at spreadsheets for 9 hours, my manager pushed a deadline up, and it's cold outside..."
                 className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-2xl text-stone-100 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm leading-relaxed"
                 required />
+              <div className="flex flex-wrap gap-2 mt-2">
+                {MOOD_EMOJIS.map(({ emoji, text }) => (
+                  <button key={emoji} type="button"
+                    onClick={() => setVent((v) => v ? v : text)}
+                    title={text}
+                    className="text-xl hover:scale-125 transition-transform">{emoji}</button>
+                ))}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -256,6 +314,13 @@ export default function Home() {
           </form>
         </section>
 
+        {error && !data && (
+          <div role="alert" className="bg-red-950/60 border border-red-700 text-red-300 p-4 rounded-2xl text-xs flex items-start gap-3">
+            <span className="shrink-0">⚠️</span>
+            <div><strong className="text-red-200 block mb-0.5">Something went wrong.</strong>{error}</div>
+          </div>
+        )}
+
         {loading && (
           <div className="text-center py-12 space-y-3" aria-live="polite" aria-busy="true">
             <div className="inline-block w-8 h-8 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" aria-hidden="true" />
@@ -264,7 +329,7 @@ export default function Home() {
         )}
 
         {data && (
-          <section ref={resultsRef} className="space-y-8 animate-fade-in" aria-label="Comfort food recommendation">
+          <section ref={resultsRef} className="space-y-4 animate-fade-in" aria-label="Comfort food recommendation">
 
             {/* Fallback banner */}
             {data.isFallback && (
@@ -316,14 +381,30 @@ export default function Home() {
                 </div>
                 <div role="tabpanel" aria-label={TABS.find(t => t.id === activeTab)?.label}
                   className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl">
-                  {renderPathway()}
+                  {renderPathway() ?? (
+                    <p className="text-center text-stone-500 text-sm py-4">Not available for this dish.</p>
+                  )}
                 </div>
               </div>
             )}
 
-            <div className="text-center pt-2">
+            <div className="flex justify-center gap-3 pt-4 flex-wrap border-t border-white/10">
+              <button onClick={handleCopyList}
+                className="px-6 py-3 bg-green-900/50 hover:bg-green-900/70 border border-green-600/50 text-green-300 hover:text-green-100 font-semibold rounded-2xl transition text-sm">
+                {listCopied ? '✅ Copied!' : '📋 Copy Shopping List'}
+              </button>
+              {isMobile && (
+                <button onClick={handleTextList}
+                  className="px-6 py-3 bg-blue-900/50 hover:bg-blue-900/70 border border-blue-600/50 text-blue-300 hover:text-blue-100 font-semibold rounded-2xl transition text-sm">
+                  📱 Text to Myself
+                </button>
+              )}
+              <button onClick={handleShare}
+                className="px-6 py-3 bg-amber-900/50 hover:bg-amber-900/70 border border-amber-600/50 text-amber-300 hover:text-amber-100 font-semibold rounded-2xl transition text-sm">
+                {copied ? '✅ Copied!' : '🔗 Share This Dish'}
+              </button>
               <button onClick={handleReset}
-                className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-stone-300 hover:text-stone-100 font-semibold rounded-2xl transition text-sm">
+                className="px-6 py-3 bg-stone-700/60 hover:bg-stone-700/80 border border-stone-500/50 text-stone-200 hover:text-white font-semibold rounded-2xl transition text-sm">
                 🔄 Find Another Recipe
               </button>
             </div>
