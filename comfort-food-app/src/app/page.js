@@ -190,7 +190,7 @@ export default function Home() {
     <main className="min-h-screen text-stone-100 font-sans">
 
       {/* Hero header */}
-      <header className="relative overflow-hidden py-8 sm:py-10 px-4 text-center">
+      <header className="relative overflow-hidden py-4 sm:py-6 px-4 text-center">
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" aria-hidden="true" />
         <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
           {/* Left cluster — flying left to right */}
@@ -352,11 +352,11 @@ export default function Home() {
               </div>
             )}
 
-            <div className="bg-gradient-to-b from-white/10 to-white/5 border border-amber-500/30 rounded-3xl p-8 text-center space-y-4 shadow-2xl">
+            <div className="bg-gradient-to-b from-white/10 to-white/5 border border-amber-500/30 rounded-2xl p-3 sm:p-4 text-center space-y-1 shadow-2xl">
               <span className="text-xs font-semibold uppercase tracking-widest text-amber-400">Your Emotional Match</span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-white">{data.heroDish?.name}</h2>
-              <p className="text-sm italic text-amber-200/90 max-w-lg mx-auto">"{data.heroDish?.tagline}"</p>
-              <p className="text-xs sm:text-sm text-stone-300 max-w-2xl mx-auto leading-relaxed bg-black/20 p-4 rounded-xl border border-white/10">
+              <h2 className="text-lg sm:text-xl font-extrabold text-white leading-tight">{data.heroDish?.name}</h2>
+              <p className="text-xs italic text-amber-200/90 max-w-lg mx-auto">"{data.heroDish?.tagline}"</p>
+              <p className="text-xs text-stone-300 max-w-2xl mx-auto leading-relaxed">
                 {data.heroDish?.whyItHeals}
               </p>
             </div>
@@ -380,7 +380,7 @@ export default function Home() {
                   ))}
                 </div>
                 <div role="tabpanel" aria-label={TABS.find(t => t.id === activeTab)?.label}
-                  className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl">
+                  className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-4 sm:p-6 shadow-xl">
                   {renderPathway() ?? (
                     <p className="text-center text-stone-500 text-sm py-4">Not available for this dish.</p>
                   )}
