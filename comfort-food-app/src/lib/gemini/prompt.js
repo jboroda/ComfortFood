@@ -1,4 +1,7 @@
 export function buildPrompt({ vent, environment, company, dietary, avoidIngredients }) {
+  // quick and dirty halal check so we don't suggest a wine pairing when it'd be
+  // inappropriate — not bulletproof (misses "muslim", other spellings, etc.)
+  // but covers the checkbox in the UI which is all we're feeding it right now
   const isHalal = typeof dietary === 'string' && dietary.toLowerCase().includes('halal');
   const userAvoid = Array.isArray(avoidIngredients) ? avoidIngredients : [];
 
@@ -12,6 +15,8 @@ export function buildPrompt({ vent, environment, company, dietary, avoidIngredie
     ? '- Do NOT include any wine or alcohol pairing.'
     : '- friendCook.winePairing: suggest one wine or beverage that complements the dish.';
 
+  // the NYT Cooking framing here does a lot of heavy lifting — without it
+  // Gemini tends to give pretty generic/bland recipe copy
   return `
 You are an empathetic culinary guide for a "Comfort Food Challenge".
 User situation:

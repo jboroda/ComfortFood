@@ -26,6 +26,9 @@ body {
   animation: fade-in 0.4s ease-out both;
 }
 
+/* gentle bob for the hero grandmas — --float-rot lets each <img> keep its own
+   static tilt since the keyframe's transform would otherwise wipe out a
+   Tailwind rotate-* class on every frame */
 @keyframes float {
   0%, 100% { transform: translateY(0) rotate(var(--float-rot, 0deg)); }
   50%      { transform: translateY(-6px) rotate(var(--float-rot, 0deg)); }

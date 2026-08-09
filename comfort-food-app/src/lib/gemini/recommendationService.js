@@ -12,5 +12,7 @@ export async function getRecommendation({ vent, environment, company, dietary, a
     },
   });
 
+  // response.text is already schema-validated JSON on Gemini's end thanks to
+  // responseSchema above, so we don't bother wrapping this parse in a try/catch
   return JSON.parse(response.text);
 }

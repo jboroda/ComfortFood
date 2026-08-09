@@ -1,5 +1,7 @@
 const card = 'bg-white/5 border border-white/10 rounded-xl p-3';
 
+// express15Min and minimalist5 both just want an ingredients+instructions
+// list, so this is shared instead of copy-pasted between the two
 function RecipeLayout({ ingredients, instructions }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

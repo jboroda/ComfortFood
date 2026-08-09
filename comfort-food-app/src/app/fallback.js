@@ -1,3 +1,6 @@
+// Static backup recipe shown when the Gemini call fails (rate limited, API down,
+// bad key, whatever). Shape needs to mirror RECOMMENDATION_SCHEMA exactly or
+// renderPathway() in page.js will choke on a missing field.
 export const FALLBACK_DATA = {
   isFallback: true,
   encouragingWords: "Whatever you're going through right now, you deserve a moment of warmth and comfort. Food has a way of grounding us when everything else feels uncertain. Here's a timeless classic to wrap around you like a hug.",

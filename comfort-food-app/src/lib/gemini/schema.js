@@ -1,5 +1,8 @@
 import { Type } from '@google/genai';
 
+// Structured output schema passed to Gemini so we get back predictable JSON
+// instead of parsing free-form text. Keep this in sync with fallback.js and
+// whatever renderPathway() in page.js expects, or things will render blank.
 export const RECOMMENDATION_SCHEMA = {
   type: Type.OBJECT,
   properties: {

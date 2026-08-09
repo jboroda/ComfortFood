@@ -10,6 +10,8 @@ export async function POST(request) {
   try {
     const { vent, environment, company, dietary, avoidIngredients } = await request.json();
 
+    // keep this in sync with MAX_CHARS on the client — server-side check is the
+    // real guard, the client one's just there so people aren't surprised
     if (!vent || typeof vent !== 'string' || vent.trim().length === 0) {
       return Response.json({ error: 'Vent field is required.' }, { status: 400 });
     }
@@ -20,6 +22,9 @@ export async function POST(request) {
     const recommendation = await getRecommendation({ vent, environment, company, dietary, avoidIngredients });
     return Response.json(recommendation);
   } catch (error) {
+    // Gemini calls fail for all sorts of reasons (quota, malformed schema response,
+    // network blip) — log the real error server-side, the client falls back to
+    // FALLBACK_DATA so the user still gets something instead of a blank error page.
     console.error('Gemini API Error:', error);
     return Response.json(
       { error: 'Failed to process comfort food request', details: error.message },

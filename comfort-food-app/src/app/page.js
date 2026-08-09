@@ -65,12 +65,16 @@ export default function Home() {
   const [listCopied, setListCopied] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  // quick UA sniff just to decide whether to show the "text to myself" button —
+  // not trying to be bulletproof here, sms: links don't do anything on desktop anyway
   useEffect(() => {
     setIsMobile(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
   }, []);
 
   const getShoppingList = () => {
     const p = data?.pathways;
+    // grab ingredients from whichever pathway actually has them — not every
+    // dish populates all six, so we fall through in rough order of usefulness
     const ingredients =
       p?.express15Min?.ingredients ??
       p?.deepDive2Hour?.ingredients ??
@@ -94,6 +98,7 @@ export default function Home() {
   const handleShare = async () => {
     const url = window.location.href;
     const text = `I just got matched with "${data.heroDish?.name}" by the Comfort Food Challenge! 🍲`;
+    // native share sheet on mobile/supported browsers, clipboard fallback everywhere else
     if (navigator.share) {
       await navigator.share({ title: text, url });
     } else {
@@ -149,6 +154,8 @@ export default function Home() {
       setData(result);
       setActiveTab('express15Min');
     } catch (err) {
+      // don't leave people staring at an error message — show the classic
+      // fallback recipe so the page still feels like it "worked"
       setError(err.message);
       setData(FALLBACK_DATA);
       setActiveTab('express15Min');
@@ -193,15 +200,21 @@ export default function Home() {
       <header className="relative overflow-hidden py-4 sm:py-6 px-4 text-center">
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70" aria-hidden="true" />
         <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
-          {/* Left cluster — flying left to right */}
+          {/* Left cluster — flying left to right.
+              Negative animation-delay staggers each one so they don't bob in sync —
+              looks off if all four float up and down on the same beat. */}
           <img src="/hero-grandma-no-background_e.png" alt=""
             className="absolute top-2 left-[4%] sm:left-[8%] h-14 sm:h-24 md:h-28 w-auto animate-float [animation-delay:-0.6s]" style={{ '--float-rot': '6deg' }} />
-          {/* <img src="/hero-grandma-no-background_c.png" alt=""
-            className="absolute top-[40%] left-[1%] sm:left-[3%] h-10 sm:h-16 md:h-20 w-auto animate-float [animation-delay:-2.4s]" style={{ '--float-rot': '4deg' }} /> */}
+          {/* grandma _c left out on purpose — her source image has a solid white
+              background instead of real transparency, shows up as a box against
+              the dark header. left in public/ in case that ever gets fixed. */}
           <img src="/hero-grandma-no-background_d.png" alt=""
             className="absolute bottom-1 left-[10%] sm:left-[14%] h-9 sm:h-12 md:h-16 w-auto animate-float [animation-delay:-1.8s]" style={{ '--float-rot': '-3deg' }} />
 
-          {/* Right cluster — flying right to left */}
+          {/* Right cluster — flying right to left.
+              _a.PNG keeps its uppercase extension on purpose — Vercel's Linux
+              filesystem is case-sensitive, lowercasing it here 404s in prod
+              even though it works fine locally on Windows. */}
           <img src="/hero-grandma-no-background_a.PNG" alt=""
             className="absolute top-1 right-[4%] sm:right-[8%] h-14 sm:h-24 md:h-28 w-auto animate-float" style={{ '--float-rot': '-6deg' }} />
           <img src="/hero-grandma-no-background_b.png" alt=""
