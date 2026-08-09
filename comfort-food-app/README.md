@@ -70,8 +70,19 @@ Open [http://localhost:3000](http://localhost:3000).
 | Variable | Required | Description |
 |---|---|---|
 | `GEMINI_API_KEY` | Yes | Google Gemini API key |
+| `JUDGE_ACCESS_CODE` | Yes | Passcode required to use the live AI features |
 
 > `.env.local` is listed in `.gitignore` and never committed.
+
+---
+
+## Judge access
+
+The app requires an access code to call the AI API (to prevent unexpected costs from public traffic).
+
+A small **🔑 Access code** input is fixed in the **bottom-right corner** of every page. Enter the code and press **Go** — it is saved for the session so you won't need to re-enter it.
+
+Without a valid code the app still loads and shows a sample comfort dish, but the AI-generated recommendations are disabled.
 
 ---
 

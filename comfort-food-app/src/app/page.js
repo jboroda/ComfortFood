@@ -64,6 +64,19 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [listCopied, setListCopied] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [judgeCode, setJudgeCode] = useState('');
+  const [codeAccepted, setCodeAccepted] = useState(false);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem('judgeCode');
+    if (saved) { setJudgeCode(saved); setCodeAccepted(true); }
+  }, []);
+
+  const handleCodeSubmit = (e) => {
+    e.preventDefault();
+    sessionStorage.setItem('judgeCode', judgeCode);
+    setCodeAccepted(true);
+  };
 
   // quick UA sniff just to decide whether to show the "text to myself" button —
   // not trying to be bulletproof here, sms: links don't do anything on desktop anyway
@@ -145,6 +158,7 @@ export default function Home() {
           vent,
           environment,
           company,
+          judgeCode,
           dietary: dietary.join(', '),
           avoidIngredients: avoidIngredients.map((l) => l.toLowerCase()),
         }),
@@ -330,7 +344,14 @@ export default function Home() {
         {error && !data && (
           <div role="alert" className="bg-red-950/60 border border-red-700 text-red-300 p-4 rounded-2xl text-xs flex items-start gap-3">
             <span className="shrink-0">⚠️</span>
-            <div><strong className="text-red-200 block mb-0.5">Something went wrong.</strong>{error}</div>
+            <div>
+              <strong className="text-red-200 block mb-0.5">
+                {error.includes('access code') ? 'Access code required.' : 'Something went wrong.'}
+              </strong>
+              {error.includes('access code')
+                ? 'This app requires a judge access code. Enter it in the bottom-right corner of the page.'
+                : error}
+            </div>
           </div>
         )}
 
@@ -425,6 +446,25 @@ export default function Home() {
           </section>
         )}
 
+      </div>
+
+      {/* Judge access code — fixed bottom-right corner */}
+      <div className="fixed bottom-4 right-4 z-50">
+        {codeAccepted ? (
+          <div className="flex items-center gap-2 bg-green-900/80 border border-green-600/50 rounded-xl px-3 py-2 text-xs text-green-300">
+            <span>🔑 Access granted</span>
+            <button onClick={() => { setCodeAccepted(false); setJudgeCode(''); sessionStorage.removeItem('judgeCode'); }}
+              className="text-green-500 hover:text-green-200 transition">✕</button>
+          </div>
+        ) : (
+          <form onSubmit={handleCodeSubmit} className="flex items-center gap-2 bg-stone-900/90 border border-white/10 rounded-xl px-3 py-2 shadow-lg backdrop-blur-sm">
+            <label htmlFor="judge-code" className="text-xs text-stone-400 whitespace-nowrap">🔑 Access code</label>
+            <input id="judge-code" type="password" value={judgeCode} onChange={(e) => setJudgeCode(e.target.value)}
+              placeholder="••••••"
+              className="w-24 bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-xs text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500" />
+            <button type="submit" className="text-xs bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold px-2 py-1 rounded-lg transition">Go</button>
+          </form>
+        )}
       </div>
 
       <footer className="text-center text-xs text-stone-600 space-y-1 pb-6">
