@@ -5,7 +5,6 @@ import ChipToggle from './components/ChipToggle';
 import { Express15Min, DeepDive2Hour, FriendCook, Minimalist5, SearchCard } from './components/PathwayCards';
 import { FALLBACK_DATA } from './fallback';
 import { googleMapsSearchUrl, googleSearchUrl } from '@/lib/links';
-import { Analytics } from "@vercel/analytics/next"
 
 const LOADING_MESSAGES = [
   'Matching emotional state with culinary comfort...',
@@ -122,6 +121,7 @@ export default function Home() {
   };
 
   const resultsRef = useRef(null);
+  const loadingRef = useRef(null);
   const MAX_CHARS = 500;
 
   const envOptions = ['🌲 Cozy Cabin', '☀️ Tropical Escape', '🏙️ Bustling City', '🏠 Childhood Kitchen'];
@@ -141,6 +141,15 @@ export default function Home() {
       resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [data]);
+
+  // the submit button's own label already changes to "Analyzing..." right where
+  // the person tapped, but the spinner block below the form can still be off-
+  // screen on mobile — scroll it into view as soon as loading starts
+  useEffect(() => {
+    if (loading && loadingRef.current) {
+      loadingRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [loading]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -360,7 +369,7 @@ export default function Home() {
         )}
 
         {loading && (
-          <div className="text-center py-12 space-y-3" aria-live="polite" aria-busy="true">
+          <div ref={loadingRef} className="text-center py-12 space-y-3" aria-live="polite" aria-busy="true">
             <div className="inline-block w-8 h-8 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" aria-hidden="true" />
             <p className="text-stone-400 text-sm animate-pulse">{LOADING_MESSAGES[msgIndex]}</p>
           </div>
@@ -456,7 +465,7 @@ export default function Home() {
       <div className="fixed bottom-4 right-4 z-50">
         {codeAccepted ? (
           <div className="flex items-center gap-2 bg-green-900/80 border border-green-600/50 rounded-xl px-3 py-2 text-xs text-green-300">
-            <span>🔑 Access granted</span>
+            <span>💾 Code saved</span>
             <button onClick={() => { setCodeAccepted(false); setJudgeCode(''); sessionStorage.removeItem('judgeCode'); }}
               className="text-green-500 hover:text-green-200 transition">✕</button>
           </div>
