@@ -275,7 +275,8 @@ export default function Home() {
                 placeholder="I've been troubleshooting the same issue for hours... checking logs, stepping through code, rerunning queries, and questioning every decision that led me here. Recommend me some comfort food that requires zero debugging."
                 className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-2xl text-stone-100 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm leading-relaxed"
                 required />
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                <span className="text-xs text-stone-500">Or tap a mood to add:</span>
                 {MOOD_EMOJIS.map(({ emoji, text }) => (
                   <button key={emoji} type="button"
                     onClick={() => setVent((v) => {
