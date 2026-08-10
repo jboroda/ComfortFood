@@ -269,7 +269,11 @@ export default function Home() {
               <div className="flex flex-wrap gap-2 mt-2">
                 {MOOD_EMOJIS.map(({ emoji, text }) => (
                   <button key={emoji} type="button"
-                    onClick={() => setVent((v) => v ? v : text)}
+                    onClick={() => setVent((v) => {
+                      const trimmed = v.trim();
+                      const next = trimmed ? `${trimmed}. ${text}` : text;
+                      return next.slice(0, MAX_CHARS);
+                    })}
                     title={text}
                     className="text-xl hover:scale-125 transition-transform">{emoji}</button>
                 ))}
