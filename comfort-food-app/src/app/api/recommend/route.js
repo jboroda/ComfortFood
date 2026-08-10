@@ -27,7 +27,7 @@ export async function POST(request) {
     const recommendation = await getRecommendation({ vent, environment, company, dietary, avoidIngredients });
     return Response.json(recommendation);
   } catch (error) {
-    // Gemini calls fail for all sorts of reasons (quota, malformed schema response,
+    // Gemini calls fail (quota, malformed schema response,
     // network blip) — log the real error server-side, the client falls back to
     // FALLBACK_DATA so the user still gets something instead of a blank error page.
     console.error('Gemini API Error:', error);
