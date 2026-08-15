@@ -14,7 +14,7 @@ Built for the [DEV.to Comfort Food Frontend Challenge](https://dev.to/devteam/jo
 2. Set your vibe (cozy cabin, date night, solo, etc.) and any dietary restrictions
 3. The app matches you with a comfort dish tailored to your emotional state
 4. Get 6 ways to execute it: 15-min express, 2-hour deep dive, cook with a friend, minimalist 5-ingredient, find a local spot, or order delivery
-5. Copy a shopping list or text it to yourself
+5. Copy a shopping list, text it to yourself, or share the dish
 
 ---
 
@@ -22,7 +22,7 @@ Built for the [DEV.to Comfort Food Frontend Challenge](https://dev.to/devteam/jo
 
 | Layer | Technology |
 |---|---|
-| Framework | [Next.js 15](https://nextjs.org) (App Router) |
+| Framework | [Next.js 16](https://nextjs.org) (App Router) |
 | AI | [Google Gemini API](https://ai.google.dev) via `@google/genai` |
 | Styling | [Tailwind CSS v4](https://tailwindcss.com) |
 | Deployment | [Vercel](https://vercel.com) |
@@ -45,15 +45,16 @@ cd comfort-food-app
 npm install
 ```
 
-### 3. Add your Gemini API key
+### 3. Add your Gemini API key and set an access code
 
 Create a `.env.local` file in the project root:
 
 ```bash
 GEMINI_API_KEY=your_api_key_here
+JUDGE_ACCESS_CODE=pick_any_passcode
 ```
 
-Get a free API key at [https://aistudio.google.com](https://aistudio.google.com).
+Get a free Gemini API key at [https://aistudio.google.com](https://aistudio.google.com). `JUDGE_ACCESS_CODE` isn't issued by anyone — it's a passcode you make up yourself and then enter in the app's access-code box (see [Judge access](#judge-access) below). Both variables are required: without `JUDGE_ACCESS_CODE` set, every request is rejected and the app only ever shows the fallback sample dish.
 
 ### 4. Run the dev server
 
